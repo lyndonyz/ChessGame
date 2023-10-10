@@ -16,6 +16,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
+
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -26,13 +27,14 @@ public class chess {
 	public static void main(String[] args) {
 		new chess();
 	}
+	
 	int possibleMovesID = -1;
 	boolean possibleMoves = false;
 	boolean whiteTurn = true;
 	final static int SIZE = 8;
 	int[][] board = new int[SIZE][SIZE];
 	int[][] moveBoard = new int[SIZE][SIZE];
-//	int[][] takeBoard = new int[SIZE][SIZE];
+	int[][] takeBoard = new int[SIZE][SIZE];
 	piece[] piece = new piece[32];
 	Rectangle[] rectPiece = new Rectangle[32];
 	
@@ -111,14 +113,7 @@ public class chess {
 				board[piece[i].getYPos()][piece[i].getXPos()] = piece[i].getId();
 			}
 		}
-		
-		
-		
 	}
-	
-	
-	
-	
 	private class DrawingPanel extends JPanel implements MouseListener{
 		
 		Image pawnB, bishopB, queenB, kingB, knightB, rookB;
@@ -138,6 +133,7 @@ public class chess {
 			boxH = (int) (panH/SIZE + 0.5);
 		}
 		DrawingPanel() {
+			
 			pawnW = loadImage("images/whitepawn.png");
 			bishopW = loadImage("images/whitebishop.png");
 			queenW = loadImage("images/whitequeen.png");
@@ -157,6 +153,11 @@ public class chess {
 			this.setFocusable(true);
 		}
 		public void paintComponent(Graphics g) {
+			for(int i = 0; i < SIZE ; i++) {
+				for(int j = 0; j < SIZE ; j++) {
+					takeBoard[i][j]=1000;
+				}
+			}
 			super.paintComponent(g);
 			Graphics2D g2 = (Graphics2D) g;
 			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -177,14 +178,6 @@ public class chess {
 					}
 				}
 			}
-
-			
-//			for(int i = 0; i<board.length; i++) {
-//				for(int j = 0; j<board.length; j++) {
-//					System.out.print(board[i][j]+" ");
-//				}
-//				System.out.println("");
-//			}
 			
 			for(int i = 0; i<board.length; i++) {
 				for(int j = 0; j<board.length; j++) {
@@ -247,6 +240,7 @@ public class chess {
 						}
 					}
 				}
+			}
 				if(possibleMoves) {
 					int leftX = piece[possibleMovesID].getXPos();
 					int rightX = SIZE - piece[possibleMovesID].getXPos() -1;
@@ -292,55 +286,73 @@ public class chess {
 						if(piece[possibleMovesID].getColor() == 0) {
 							
 							
-							if(moveBoard[piece[possibleMovesID].getXPos()+1][piece[possibleMovesID].getYPos()-1]/10 == 8) {
+							if(moveBoard[piece[possibleMovesID].getXPos()+1][piece[possibleMovesID].getYPos()-1]/10 == 8 && piece[possibleMovesID].getColor() != moveBoard[piece[possibleMovesID].getXPos()+1][piece[possibleMovesID].getYPos()-1]-80) {
 								possibleMovesRect[counter] = new Rectangle((piece[possibleMovesID].getXPos()+1)*boxW, (piece[possibleMovesID].getYPos()-1)*boxH, (boxW), (boxH));
 								moveBoard[piece[possibleMovesID].getXPos()+1][piece[possibleMovesID].getYPos()-1] = counter+1;
+								takeBoard[piece[possibleMovesID].getXPos()+1][piece[possibleMovesID].getYPos()-1] = counter+1;
 								counter++;
 							}
-							if(moveBoard[piece[possibleMovesID].getXPos()-1][piece[possibleMovesID].getYPos()-1]/10 == 8) {
+							if(moveBoard[piece[possibleMovesID].getXPos()-1][piece[possibleMovesID].getYPos()-1]/10 == 8 && piece[possibleMovesID].getColor() != moveBoard[piece[possibleMovesID].getXPos()-1][piece[possibleMovesID].getYPos()-1]-80) {
 								possibleMovesRect[counter] = new Rectangle((piece[possibleMovesID].getXPos()-1)*boxW, (piece[possibleMovesID].getYPos()-1)*boxH, (boxW), (boxH));
 								moveBoard[piece[possibleMovesID].getXPos()-1][piece[possibleMovesID].getYPos()-1] = counter+1;
+								takeBoard[piece[possibleMovesID].getXPos()-1][piece[possibleMovesID].getYPos()-1] = counter+1;
 								counter++;
 							}
 							
 							
 							if(!piece[possibleMovesID].hasMoved()) {
 								for(int j = 0; j < 2; j++) {
-									possibleMovesRect[counter] = new Rectangle(piece[possibleMovesID].getXPos()*boxW, (piece[possibleMovesID].getYPos()-(j+1))*boxH, (boxW), (boxH));
-									moveBoard[piece[possibleMovesID].getXPos()][piece[possibleMovesID].getYPos()-(j+1)] = counter+1;
-									counter++;
+									if(moveBoard[piece[possibleMovesID].getXPos()][piece[possibleMovesID].getYPos()-(j+1)]/10 == 8) {
+										break;
+									}
+									else {
+										possibleMovesRect[counter] = new Rectangle(piece[possibleMovesID].getXPos()*boxW, (piece[possibleMovesID].getYPos()-(j+1))*boxH, (boxW), (boxH));
+										moveBoard[piece[possibleMovesID].getXPos()][piece[possibleMovesID].getYPos()-(j+1)] = counter+1;
+										counter++;
+									}
 								}
 							}
 							else {
-								possibleMovesRect[counter] = new Rectangle(piece[possibleMovesID].getXPos()*boxW, (piece[possibleMovesID].getYPos()-1)*boxH, (boxW), (boxH));
-								moveBoard[piece[possibleMovesID].getXPos()][piece[possibleMovesID].getYPos()-1] = (counter+1);
-								counter++;
+								if(!(moveBoard[piece[possibleMovesID].getXPos()][piece[possibleMovesID].getYPos()-1]/10 == 8)) {
+									possibleMovesRect[counter] = new Rectangle(piece[possibleMovesID].getXPos()*boxW, (piece[possibleMovesID].getYPos()-1)*boxH, (boxW), (boxH));
+									moveBoard[piece[possibleMovesID].getXPos()][piece[possibleMovesID].getYPos()-1] = (counter+1);
+									counter++;
+								}
 							}
 						}
 						else {
-							if(moveBoard[piece[possibleMovesID].getXPos()+1][piece[possibleMovesID].getYPos()+1]/10 == 8) {
+							if(moveBoard[piece[possibleMovesID].getXPos()+1][piece[possibleMovesID].getYPos()+1]/10 == 8 && piece[possibleMovesID].getColor() != moveBoard[piece[possibleMovesID].getXPos()+1][piece[possibleMovesID].getYPos()+1]-80) {
 								possibleMovesRect[counter] = new Rectangle((piece[possibleMovesID].getXPos()+1)*boxW, (piece[possibleMovesID].getYPos()+1)*boxH, (boxW), (boxH));
 								moveBoard[piece[possibleMovesID].getXPos()+1][piece[possibleMovesID].getYPos()+1] = counter+1;
+								takeBoard[piece[possibleMovesID].getXPos()+1][piece[possibleMovesID].getYPos()+1] = counter+1;
 								counter++;
 							}
-							if(moveBoard[piece[possibleMovesID].getXPos()-1][piece[possibleMovesID].getYPos()+1]/10 == 8) {
+							if(moveBoard[piece[possibleMovesID].getXPos()-1][piece[possibleMovesID].getYPos()+1]/10 == 8 && piece[possibleMovesID].getColor() != moveBoard[piece[possibleMovesID].getXPos()-1][piece[possibleMovesID].getYPos()+1]-80) {
 								possibleMovesRect[counter] = new Rectangle((piece[possibleMovesID].getXPos()-1)*boxW, (piece[possibleMovesID].getYPos()+1)*boxH, (boxW), (boxH));
 								moveBoard[piece[possibleMovesID].getXPos()-1][piece[possibleMovesID].getYPos()+1] = counter+1;
+								takeBoard[piece[possibleMovesID].getXPos()-1][piece[possibleMovesID].getYPos()+1] = counter+1;
 								counter++;
 							}
 							
 							
 							if(!piece[possibleMovesID].hasMoved()) {
 								for(int j = 0; j < 2; j++) {
-									possibleMovesRect[counter] = new Rectangle(piece[possibleMovesID].getXPos()*boxW, (piece[possibleMovesID].getYPos()+(j+1))*boxH, (boxW), (boxH));
-									moveBoard[piece[possibleMovesID].getXPos()][piece[possibleMovesID].getYPos()+(j+1)] = counter+1;
-									counter++;
+									if(moveBoard[piece[possibleMovesID].getXPos()][piece[possibleMovesID].getYPos()+(j+1)]/10 == 8) {
+										break;
+									}
+									else {
+										possibleMovesRect[counter] = new Rectangle(piece[possibleMovesID].getXPos()*boxW, (piece[possibleMovesID].getYPos()+(j+1))*boxH, (boxW), (boxH));
+										moveBoard[piece[possibleMovesID].getXPos()][piece[possibleMovesID].getYPos()+(j+1)] = counter+1;
+										counter++;
+									}
 								}
 							}
 							else {
-								possibleMovesRect[counter] = new Rectangle(piece[possibleMovesID].getXPos()*boxW, (piece[possibleMovesID].getYPos()+1)*boxH, (boxW), (boxH));
-								moveBoard[piece[possibleMovesID].getXPos()][piece[possibleMovesID].getYPos()+(1)] = (counter+1);
-								counter++;
+								if(!(moveBoard[piece[possibleMovesID].getXPos()][piece[possibleMovesID].getYPos()+(1)]/10 == 8)) {
+									possibleMovesRect[counter] = new Rectangle(piece[possibleMovesID].getXPos()*boxW, (piece[possibleMovesID].getYPos()+1)*boxH, (boxW), (boxH));
+									moveBoard[piece[possibleMovesID].getXPos()][piece[possibleMovesID].getYPos()+(1)] = (counter+1);
+									counter++;
+								}
 							}
 						}
 					}
@@ -358,6 +370,7 @@ public class chess {
 								if(piece[possibleMovesID].getColor() != moveBoard[piece[possibleMovesID].getXPos()+(j+1)][piece[possibleMovesID].getYPos()+(j+1)]-80) {
 									possibleMovesRect[counter] = new Rectangle((piece[possibleMovesID].getXPos()+(j+1))*boxW, (piece[possibleMovesID].getYPos()+(j+1))*boxH, (boxW), (boxH));
 									moveBoard[piece[possibleMovesID].getXPos()+(j+1)][piece[possibleMovesID].getYPos()+(j+1)] = (counter+1);
+									takeBoard[piece[possibleMovesID].getXPos()+(j+1)][piece[possibleMovesID].getYPos()+(j+1)] = (counter+1);
 									counter++;
 								}
 								break;
@@ -379,6 +392,7 @@ public class chess {
 								if(piece[possibleMovesID].getColor() != moveBoard[piece[possibleMovesID].getXPos()+(j+1)][piece[possibleMovesID].getYPos()-(j+1)]-80) {
 									possibleMovesRect[counter] = new Rectangle((piece[possibleMovesID].getXPos()+(j+1))*boxW, (piece[possibleMovesID].getYPos()-(j+1))*boxH, (boxW), (boxH));
 									moveBoard[piece[possibleMovesID].getXPos()+(j+1)][piece[possibleMovesID].getYPos()-(j+1)] = (counter+1);
+									takeBoard[piece[possibleMovesID].getXPos()+(j+1)][piece[possibleMovesID].getYPos()-(j+1)] = (counter+1);
 									counter++;
 								}
 								break;
@@ -400,6 +414,7 @@ public class chess {
 								if(piece[possibleMovesID].getColor() != moveBoard[piece[possibleMovesID].getXPos()-(j+1)][piece[possibleMovesID].getYPos()+(j+1)]-80) {
 									possibleMovesRect[counter] = new Rectangle((piece[possibleMovesID].getXPos()-(j+1))*boxW, (piece[possibleMovesID].getYPos()+(j+1))*boxH, (boxW), (boxH));
 									moveBoard[piece[possibleMovesID].getXPos()-(j+1)][piece[possibleMovesID].getYPos()+(j+1)] = (counter+1);
+									takeBoard[piece[possibleMovesID].getXPos()-(j+1)][piece[possibleMovesID].getYPos()+(j+1)] = (counter+1);
 									counter++;
 								}
 								break;
@@ -421,6 +436,7 @@ public class chess {
 								if(piece[possibleMovesID].getColor() != moveBoard[piece[possibleMovesID].getXPos()-(j+1)][piece[possibleMovesID].getYPos()-(j+1)]-80) {
 									possibleMovesRect[counter] = new Rectangle((piece[possibleMovesID].getXPos()-(j+1))*boxW, (piece[possibleMovesID].getYPos()-(j+1))*boxH, (boxW), (boxH));
 									moveBoard[piece[possibleMovesID].getXPos()-(j+1)][piece[possibleMovesID].getYPos()-(j+1)] = (counter+1);
+									takeBoard[piece[possibleMovesID].getXPos()-(j+1)][piece[possibleMovesID].getYPos()-(j+1)] = (counter+1);
 									counter++;
 								}
 								break;
@@ -441,6 +457,7 @@ public class chess {
 								if(piece[possibleMovesID].getColor() != moveBoard[piece[possibleMovesID].getXPos()-(j+1)][piece[possibleMovesID].getYPos()]-80) {
 									possibleMovesRect[counter] = new Rectangle((piece[possibleMovesID].getXPos()-(j+1))*boxW, (piece[possibleMovesID].getYPos())*boxH, (boxW), (boxH));
 									moveBoard[piece[possibleMovesID].getXPos()-(j+1)][piece[possibleMovesID].getYPos()] = (counter+1);
+									takeBoard[piece[possibleMovesID].getXPos()-(j+1)][piece[possibleMovesID].getYPos()] = (counter+1);
 									counter++;
 								}
 								break;
@@ -456,6 +473,7 @@ public class chess {
 								if(piece[possibleMovesID].getColor() != moveBoard[piece[possibleMovesID].getXPos()+(j+1)][piece[possibleMovesID].getYPos()]-80) {
 									possibleMovesRect[counter] = new Rectangle((piece[possibleMovesID].getXPos()+(j+1))*boxW, (piece[possibleMovesID].getYPos())*boxH, (boxW), (boxH));
 									moveBoard[piece[possibleMovesID].getXPos()+(j+1)][piece[possibleMovesID].getYPos()] = (counter+1);
+									takeBoard[piece[possibleMovesID].getXPos()+(j+1)][piece[possibleMovesID].getYPos()] = (counter+1);
 									counter++;
 								}
 								break;
@@ -471,6 +489,7 @@ public class chess {
 								if(piece[possibleMovesID].getColor() != moveBoard[piece[possibleMovesID].getXPos()][piece[possibleMovesID].getYPos()-(j+1)]-80) {
 									possibleMovesRect[counter] = new Rectangle((piece[possibleMovesID].getXPos())*boxW, (piece[possibleMovesID].getYPos()-(j+1))*boxH, (boxW), (boxH));
 									moveBoard[piece[possibleMovesID].getXPos()][piece[possibleMovesID].getYPos()-(j+1)] = (counter+1);
+									takeBoard[piece[possibleMovesID].getXPos()][piece[possibleMovesID].getYPos()-(j+1)] = (counter+1);
 									counter++;
 								}
 								break;
@@ -486,6 +505,7 @@ public class chess {
 								if(piece[possibleMovesID].getColor() !=moveBoard[piece[possibleMovesID].getXPos()][piece[possibleMovesID].getYPos()+(j+1)]-80) {
 									possibleMovesRect[counter] = new Rectangle((piece[possibleMovesID].getXPos())*boxW, (piece[possibleMovesID].getYPos()+(j+1))*boxH, (boxW), (boxH));
 									moveBoard[piece[possibleMovesID].getXPos()][piece[possibleMovesID].getYPos()+(j+1)] = (counter+1);
+									takeBoard[piece[possibleMovesID].getXPos()][piece[possibleMovesID].getYPos()+(j+1)] = (counter+1);
 									counter++;
 								}
 								break;
@@ -511,6 +531,7 @@ public class chess {
 								if(piece[possibleMovesID].getColor() != moveBoard[piece[possibleMovesID].getXPos()+(j+1)][piece[possibleMovesID].getYPos()+(j+1)]-80) {
 									possibleMovesRect[counter] = new Rectangle((piece[possibleMovesID].getXPos()+(j+1))*boxW, (piece[possibleMovesID].getYPos()+(j+1))*boxH, (boxW), (boxH));
 									moveBoard[piece[possibleMovesID].getXPos()+(j+1)][piece[possibleMovesID].getYPos()+(j+1)] = (counter+1);
+									takeBoard[piece[possibleMovesID].getXPos()+(j+1)][piece[possibleMovesID].getYPos()+(j+1)] = (counter+1);
 									counter++;
 								}
 								break;
@@ -532,6 +553,7 @@ public class chess {
 								if(piece[possibleMovesID].getColor() != moveBoard[piece[possibleMovesID].getXPos()+(j+1)][piece[possibleMovesID].getYPos()-(j+1)]-80) {
 									possibleMovesRect[counter] = new Rectangle((piece[possibleMovesID].getXPos()+(j+1))*boxW, (piece[possibleMovesID].getYPos()-(j+1))*boxH, (boxW), (boxH));
 									moveBoard[piece[possibleMovesID].getXPos()+(j+1)][piece[possibleMovesID].getYPos()-(j+1)] = (counter+1);
+									takeBoard[piece[possibleMovesID].getXPos()+(j+1)][piece[possibleMovesID].getYPos()-(j+1)] = (counter+1);
 									counter++;
 								}
 								break;
@@ -553,6 +575,7 @@ public class chess {
 								if(piece[possibleMovesID].getColor() != moveBoard[piece[possibleMovesID].getXPos()-(j+1)][piece[possibleMovesID].getYPos()+(j+1)]-80) {
 									possibleMovesRect[counter] = new Rectangle((piece[possibleMovesID].getXPos()-(j+1))*boxW, (piece[possibleMovesID].getYPos()+(j+1))*boxH, (boxW), (boxH));
 									moveBoard[piece[possibleMovesID].getXPos()-(j+1)][piece[possibleMovesID].getYPos()+(j+1)] = (counter+1);
+									takeBoard[piece[possibleMovesID].getXPos()-(j+1)][piece[possibleMovesID].getYPos()+(j+1)] = (counter+1);
 									counter++;
 								}
 								break;
@@ -574,6 +597,7 @@ public class chess {
 								if(piece[possibleMovesID].getColor() != moveBoard[piece[possibleMovesID].getXPos()-(j+1)][piece[possibleMovesID].getYPos()-(j+1)]-80) {
 									possibleMovesRect[counter] = new Rectangle((piece[possibleMovesID].getXPos()-(j+1))*boxW, (piece[possibleMovesID].getYPos()-(j+1))*boxH, (boxW), (boxH));
 									moveBoard[piece[possibleMovesID].getXPos()-(j+1)][piece[possibleMovesID].getYPos()-(j+1)] = (counter+1);
+									takeBoard[piece[possibleMovesID].getXPos()-(j+1)][piece[possibleMovesID].getYPos()-(j+1)] = (counter+1);
 									counter++;
 								}
 								break;
@@ -589,6 +613,7 @@ public class chess {
 								if(piece[possibleMovesID].getColor() != moveBoard[piece[possibleMovesID].getXPos()-(j+1)][piece[possibleMovesID].getYPos()]-80) {
 									possibleMovesRect[counter] = new Rectangle((piece[possibleMovesID].getXPos()-(j+1))*boxW, (piece[possibleMovesID].getYPos())*boxH, (boxW), (boxH));
 									moveBoard[piece[possibleMovesID].getXPos()-(j+1)][piece[possibleMovesID].getYPos()] = (counter+1);
+									takeBoard[piece[possibleMovesID].getXPos()-(j+1)][piece[possibleMovesID].getYPos()] = (counter+1);
 									counter++;
 								}
 								break;
@@ -604,6 +629,7 @@ public class chess {
 								if(piece[possibleMovesID].getColor() != moveBoard[piece[possibleMovesID].getXPos()+(j+1)][piece[possibleMovesID].getYPos()]-80) {
 									possibleMovesRect[counter] = new Rectangle((piece[possibleMovesID].getXPos()+(j+1))*boxW, (piece[possibleMovesID].getYPos())*boxH, (boxW), (boxH));
 									moveBoard[piece[possibleMovesID].getXPos()+(j+1)][piece[possibleMovesID].getYPos()] = (counter+1);
+									takeBoard[piece[possibleMovesID].getXPos()+(j+1)][piece[possibleMovesID].getYPos()] = (counter+1);
 									counter++;
 								}
 								break;
@@ -619,6 +645,7 @@ public class chess {
 								if(piece[possibleMovesID].getColor() != moveBoard[piece[possibleMovesID].getXPos()][piece[possibleMovesID].getYPos()-(j+1)]-80) {
 									possibleMovesRect[counter] = new Rectangle((piece[possibleMovesID].getXPos())*boxW, (piece[possibleMovesID].getYPos()-(j+1))*boxH, (boxW), (boxH));
 									moveBoard[piece[possibleMovesID].getXPos()][piece[possibleMovesID].getYPos()-(j+1)] = (counter+1);
+									takeBoard[piece[possibleMovesID].getXPos()][piece[possibleMovesID].getYPos()-(j+1)] = (counter+1);
 									counter++;
 								}
 								break;
@@ -634,6 +661,7 @@ public class chess {
 								if(piece[possibleMovesID].getColor() !=moveBoard[piece[possibleMovesID].getXPos()][piece[possibleMovesID].getYPos()+(j+1)]-80) {
 									possibleMovesRect[counter] = new Rectangle((piece[possibleMovesID].getXPos())*boxW, (piece[possibleMovesID].getYPos()+(j+1))*boxH, (boxW), (boxH));
 									moveBoard[piece[possibleMovesID].getXPos()][piece[possibleMovesID].getYPos()+(j+1)] = (counter+1);
+									takeBoard[piece[possibleMovesID].getXPos()][piece[possibleMovesID].getYPos()+(j+1)] = (counter+1);
 									counter++;
 								}
 								break;
@@ -652,6 +680,7 @@ public class chess {
 								if(piece[possibleMovesID].getColor() != moveBoard[piece[possibleMovesID].getXPos()+(1)][piece[possibleMovesID].getYPos()+(1)]-80) {
 									possibleMovesRect[counter] = new Rectangle((piece[possibleMovesID].getXPos()+(1))*boxW, (piece[possibleMovesID].getYPos()+(1))*boxH, (boxW), (boxH));
 									moveBoard[piece[possibleMovesID].getXPos()+(1)][piece[possibleMovesID].getYPos()+(1)] = (counter+1);
+									takeBoard[piece[possibleMovesID].getXPos()+(1)][piece[possibleMovesID].getYPos()+(1)] = (counter+1);
 									counter++;
 								}
 							}
@@ -667,6 +696,7 @@ public class chess {
 								if(piece[possibleMovesID].getColor() != moveBoard[piece[possibleMovesID].getXPos()+(1)][piece[possibleMovesID].getYPos()-(1)]-80) {
 									possibleMovesRect[counter] = new Rectangle((piece[possibleMovesID].getXPos()+(1))*boxW, (piece[possibleMovesID].getYPos()-(1))*boxH, (boxW), (boxH));
 									moveBoard[piece[possibleMovesID].getXPos()+(1)][piece[possibleMovesID].getYPos()-(1)] = (counter+1);
+									takeBoard[piece[possibleMovesID].getXPos()+(1)][piece[possibleMovesID].getYPos()-(1)] = (counter+1);
 									counter++;
 								}
 							}
@@ -682,6 +712,7 @@ public class chess {
 								if(piece[possibleMovesID].getColor() != moveBoard[piece[possibleMovesID].getXPos()-(1)][piece[possibleMovesID].getYPos()+(1)]-80) {
 									possibleMovesRect[counter] = new Rectangle((piece[possibleMovesID].getXPos()-(1))*boxW, (piece[possibleMovesID].getYPos()+(1))*boxH, (boxW), (boxH));
 									moveBoard[piece[possibleMovesID].getXPos()-(1)][piece[possibleMovesID].getYPos()+(1)] = (counter+1);
+									takeBoard[piece[possibleMovesID].getXPos()-(1)][piece[possibleMovesID].getYPos()+(1)] = (counter+1);
 									counter++;
 								}
 							}
@@ -696,6 +727,7 @@ public class chess {
 								if(piece[possibleMovesID].getColor() != moveBoard[piece[possibleMovesID].getXPos()-(1)][piece[possibleMovesID].getYPos()-(1)]-80) {
 									possibleMovesRect[counter] = new Rectangle((piece[possibleMovesID].getXPos()-(1))*boxW, (piece[possibleMovesID].getYPos()-(1))*boxH, (boxW), (boxH));
 									moveBoard[piece[possibleMovesID].getXPos()-(1)][piece[possibleMovesID].getYPos()-(1)] = (counter+1);
+									takeBoard[piece[possibleMovesID].getXPos()-(1)][piece[possibleMovesID].getYPos()-(1)] = (counter+1);
 									counter++;
 								}
 							}
@@ -712,6 +744,7 @@ public class chess {
 								if(piece[possibleMovesID].getColor() != moveBoard[piece[possibleMovesID].getXPos()-(1)][piece[possibleMovesID].getYPos()]-80) {
 									possibleMovesRect[counter] = new Rectangle((piece[possibleMovesID].getXPos()-(1))*boxW, (piece[possibleMovesID].getYPos())*boxH, (boxW), (boxH));
 									moveBoard[piece[possibleMovesID].getXPos()-(1)][piece[possibleMovesID].getYPos()] = (counter+1);
+									takeBoard[piece[possibleMovesID].getXPos()-(1)][piece[possibleMovesID].getYPos()] = (counter+1);
 									counter++;
 								}
 							}
@@ -727,6 +760,7 @@ public class chess {
 								if(piece[possibleMovesID].getColor() != moveBoard[piece[possibleMovesID].getXPos()+(1)][piece[possibleMovesID].getYPos()]-80) {
 									possibleMovesRect[counter] = new Rectangle((piece[possibleMovesID].getXPos()+(1))*boxW, (piece[possibleMovesID].getYPos())*boxH, (boxW), (boxH));
 									moveBoard[piece[possibleMovesID].getXPos()+(1)][piece[possibleMovesID].getYPos()] = (counter+1);
+									takeBoard[piece[possibleMovesID].getXPos()+(1)][piece[possibleMovesID].getYPos()] = (counter+1);
 									counter++;
 								}
 							}
@@ -743,6 +777,7 @@ public class chess {
 								if(piece[possibleMovesID].getColor() != moveBoard[piece[possibleMovesID].getXPos()][piece[possibleMovesID].getYPos()-(1)]-80) {
 									possibleMovesRect[counter] = new Rectangle((piece[possibleMovesID].getXPos())*boxW, (piece[possibleMovesID].getYPos()-(1))*boxH, (boxW), (boxH));
 									moveBoard[piece[possibleMovesID].getXPos()][piece[possibleMovesID].getYPos()-(1)] = (counter+1);
+									takeBoard[piece[possibleMovesID].getXPos()][piece[possibleMovesID].getYPos()-(1)] = (counter+1);
 									counter++;
 								}
 							}
@@ -758,6 +793,7 @@ public class chess {
 								if(piece[possibleMovesID].getColor() !=moveBoard[piece[possibleMovesID].getXPos()][piece[possibleMovesID].getYPos()+(1)]-80) {
 									possibleMovesRect[counter] = new Rectangle((piece[possibleMovesID].getXPos())*boxW, (piece[possibleMovesID].getYPos()+(1))*boxH, (boxW), (boxH));
 									moveBoard[piece[possibleMovesID].getXPos()][piece[possibleMovesID].getYPos()+(1)] = (counter+1);
+									takeBoard[piece[possibleMovesID].getXPos()][piece[possibleMovesID].getYPos()+(1)] = (counter+1);
 									counter++;
 								}
 							}
@@ -776,6 +812,7 @@ public class chess {
 									if(piece[possibleMovesID].getColor() != moveBoard[piece[possibleMovesID].getXPos()-2][piece[possibleMovesID].getYPos()-1]-80) {
 										possibleMovesRect[counter] = new Rectangle((piece[possibleMovesID].getXPos()-2)*boxW, (piece[possibleMovesID].getYPos()-1)*boxH, (boxW), (boxH));
 										moveBoard[piece[possibleMovesID].getXPos()-2][piece[possibleMovesID].getYPos()-1] = (counter+1);
+										takeBoard[piece[possibleMovesID].getXPos()-2][piece[possibleMovesID].getYPos()-1] = (counter+1);
 										counter++;
 									}
 								}
@@ -790,6 +827,7 @@ public class chess {
 									if(piece[possibleMovesID].getColor() != moveBoard[piece[possibleMovesID].getXPos()-(2)][piece[possibleMovesID].getYPos()+1]-80) {
 										possibleMovesRect[counter] = new Rectangle((piece[possibleMovesID].getXPos()-(2))*boxW, (piece[possibleMovesID].getYPos()+1)*boxH, (boxW), (boxH));
 										moveBoard[piece[possibleMovesID].getXPos()-(2)][piece[possibleMovesID].getYPos()+1] = (counter+1);
+										takeBoard[piece[possibleMovesID].getXPos()-(2)][piece[possibleMovesID].getYPos()+1] = (counter+1);
 										counter++;
 									}
 								}
@@ -806,6 +844,7 @@ public class chess {
 									if(piece[possibleMovesID].getColor() != moveBoard[piece[possibleMovesID].getXPos()+2][piece[possibleMovesID].getYPos()-1]-80) {
 										possibleMovesRect[counter] = new Rectangle((piece[possibleMovesID].getXPos()+2)*boxW, (piece[possibleMovesID].getYPos()-1)*boxH, (boxW), (boxH));
 										moveBoard[piece[possibleMovesID].getXPos()+2][piece[possibleMovesID].getYPos()-1] = (counter+1);
+										takeBoard[piece[possibleMovesID].getXPos()+2][piece[possibleMovesID].getYPos()-1] = (counter+1);
 										counter++;
 									}
 								}
@@ -820,6 +859,7 @@ public class chess {
 									if(piece[possibleMovesID].getColor() != moveBoard[piece[possibleMovesID].getXPos()+(2)][piece[possibleMovesID].getYPos()+1]-80) {
 										possibleMovesRect[counter] = new Rectangle((piece[possibleMovesID].getXPos()+(2))*boxW, (piece[possibleMovesID].getYPos()+1)*boxH, (boxW), (boxH));
 										moveBoard[piece[possibleMovesID].getXPos()+(2)][piece[possibleMovesID].getYPos()+1] = (counter+1);
+										takeBoard[piece[possibleMovesID].getXPos()+(2)][piece[possibleMovesID].getYPos()+1] = (counter+1);
 										counter++;
 									}
 								}
@@ -836,6 +876,7 @@ public class chess {
 									if(piece[possibleMovesID].getColor() != moveBoard[piece[possibleMovesID].getXPos()+1][piece[possibleMovesID].getYPos()-(2)]-80) {
 										possibleMovesRect[counter] = new Rectangle((piece[possibleMovesID].getXPos()+1)*boxW, (piece[possibleMovesID].getYPos()-(2))*boxH, (boxW), (boxH));
 										moveBoard[piece[possibleMovesID].getXPos()+1][piece[possibleMovesID].getYPos()-(2)] = (counter+1);
+										takeBoard[piece[possibleMovesID].getXPos()+1][piece[possibleMovesID].getYPos()-(2)] = (counter+1);
 										counter++;
 									}
 								}
@@ -850,6 +891,7 @@ public class chess {
 									if(piece[possibleMovesID].getColor() != moveBoard[piece[possibleMovesID].getXPos()-1][piece[possibleMovesID].getYPos()-(2)]-80) {
 										possibleMovesRect[counter] = new Rectangle((piece[possibleMovesID].getXPos()-1)*boxW, (piece[possibleMovesID].getYPos()-(2))*boxH, (boxW), (boxH));
 										moveBoard[piece[possibleMovesID].getXPos()-1][piece[possibleMovesID].getYPos()-(2)] = (counter+1);
+										takeBoard[piece[possibleMovesID].getXPos()-1][piece[possibleMovesID].getYPos()-(2)] = (counter+1);
 										counter++;
 									}
 								}
@@ -866,6 +908,7 @@ public class chess {
 									if(piece[possibleMovesID].getColor() != moveBoard[piece[possibleMovesID].getXPos()+1][piece[possibleMovesID].getYPos()+(2)]-80) {
 										possibleMovesRect[counter] = new Rectangle((piece[possibleMovesID].getXPos()+1)*boxW, (piece[possibleMovesID].getYPos()+(2))*boxH, (boxW), (boxH));
 										moveBoard[piece[possibleMovesID].getXPos()+1][piece[possibleMovesID].getYPos()+(2)] = (counter+1);
+										takeBoard[piece[possibleMovesID].getXPos()+1][piece[possibleMovesID].getYPos()+(2)] = (counter+1);
 										counter++;
 									}
 								}
@@ -880,6 +923,7 @@ public class chess {
 									if(piece[possibleMovesID].getColor() != moveBoard[piece[possibleMovesID].getXPos()-1][piece[possibleMovesID].getYPos()+(2)]-80) {
 										possibleMovesRect[counter] = new Rectangle((piece[possibleMovesID].getXPos()-1)*boxW, (piece[possibleMovesID].getYPos()+(2))*boxH, (boxW), (boxH));
 										moveBoard[piece[possibleMovesID].getXPos()-1][piece[possibleMovesID].getYPos()+(2)] = (counter+1);
+										takeBoard[piece[possibleMovesID].getXPos()-1][piece[possibleMovesID].getYPos()+(2)] = (counter+1);
 										counter++;
 									}
 								}
@@ -891,23 +935,21 @@ public class chess {
 							}
 						}
 					}
-					for(int ik = 0; ik<moveBoard.length; ik++) {
-						for(int j = 0; j<moveBoard.length; j++) {
-							System.out.print(moveBoard[ik][j]+" ");
-						}
-						System.out.println("");
-					}
-					System.out.println("");
+					
 					for(int j = 0; j < possibleMovesRect.length; j++) {
-						g.setColor(new Color(255,255,0,25));
+						for(int c = 0; c < takeBoard.length; c++) {
+							for(int d = 0; d < takeBoard.length; d++) {
+								if(takeBoard[d][c] == j+1) {
+									g.setColor(new Color(255,0,0,125));
+									((Graphics2D) g).fill(possibleMovesRect[j]);
+								}
+							}
+						}
+						g.setColor(new Color(255,255,0,125));
 						((Graphics2D) g).fill(possibleMovesRect[j]);
 					}
-//					g.setColor(new Color(255,0,0,25));
-//					for(int j = 0; j < possibleTakeRect.length; j++) {
-//						((Graphics2D) g).fill(possibleTakeRect[j]);
-//					}
 				}
-			}
+			
 			
 			//lines
 			g.setColor(new Color(156, 141, 126));
@@ -948,7 +990,19 @@ public class chess {
 					possibleMoves = false;
 					break;
 					}
-				}				
+				}
+				for(int i = 0; i < rectPiece.length; i++) {
+					if(rectPiece[i].contains(e.getX(), e.getY()) && !piece[i].isDead()) {
+						if(piece[i].getColor() == 0 && whiteTurn) {
+							possibleMoves = false;
+							break;
+						}
+						if(piece[i].getColor() == 1 && !whiteTurn) {
+							possibleMoves = false;
+							break;
+						}
+					}
+				}
 			}
 			else {
 				if(!possibleMoves) {
