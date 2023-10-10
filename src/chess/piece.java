@@ -17,15 +17,17 @@ public class piece {
 		this.x = x;
 		this.y = y;
 	}
-	boolean isAlive() {
+	boolean isDead() {
 		return dead;
 	}
 	char getType() {
 		return type;
 	}
-	void changeState(boolean dead, char type) {
-		this.dead = dead;
+	void changeType(char type) {
 		this.type = type;
+	}
+	void changeState(boolean dead) {
+		this.dead = dead;
 	}
 	void madeMove(boolean firstMove) {
 		this.firstMove = firstMove;
