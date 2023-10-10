@@ -28,18 +28,6 @@ public class chess {
 	int[][] moveBoard = new int[SIZE][SIZE];
 	piece[] piece = new piece[32];
 	Rectangle[] rectPiece = new Rectangle[32];
-//	
-//	pawn[] piece = new pawn[16];
-//	Rectangle[] rectPiece = new Rectangle[16];
-//	
-//	bishop[] piece = new bishop[4];
-//	Rectangle[] rectPiece = new Rectangle[4];
-//	
-//	rook[] piece = new rook[4];
-//	Rectangle[] rectPiece = new Rectangle[4];
-//	
-//	queen[] piece = new queen[2];
-//	Rectangle[] rectPiece = new Rectangle[2];
 	
 	Rectangle[] possibleMovesRect = new Rectangle[30];
 //	Rectangle[] possibleTakeRect = new Rectangle[8];
@@ -592,7 +580,136 @@ public class chess {
 							}
 						}
 					}
-					else {
+					else if (piece[possibleMovesID].getType() == 'k'){
+						int leftX = piece[possibleMovesID].getXPos();
+						int rightX = SIZE - piece[possibleMovesID].getXPos() -1;
+						int topY = piece[possibleMovesID].getYPos();
+						int bottomY = SIZE - piece[possibleMovesID].getYPos() -1;
+						int counter = 0;
+//						int takeCounter = 0;
+						
+						if(rightX != 0 && bottomY != 0) {
+							if(moveBoard[piece[possibleMovesID].getXPos()+(1)][piece[possibleMovesID].getYPos()+(1)]/10 == 8){
+								if(piece[possibleMovesID].getColor() != moveBoard[piece[possibleMovesID].getXPos()+(1)][piece[possibleMovesID].getYPos()+(1)]-80) {
+									possibleMovesRect[counter] = new Rectangle((piece[possibleMovesID].getXPos()+(1))*boxW, (piece[possibleMovesID].getYPos()+(1))*boxH, (boxW), (boxH));
+									moveBoard[piece[possibleMovesID].getXPos()+(1)][piece[possibleMovesID].getYPos()+(1)] = (counter+1);
+									counter++;
+								}
+							}
+							else {
+								possibleMovesRect[counter] = new Rectangle((piece[possibleMovesID].getXPos()+(1))*boxW, (piece[possibleMovesID].getYPos()+(1))*boxH, (boxW), (boxH));
+								moveBoard[piece[possibleMovesID].getXPos()+(1)][piece[possibleMovesID].getYPos()+(1)] = (counter+1);
+								counter++;
+							}
+						}
+
+						if(rightX != 0 && topY != 0) {
+							if(moveBoard[piece[possibleMovesID].getXPos()+(1)][piece[possibleMovesID].getYPos()-(1)]/10 == 8) {
+								if(piece[possibleMovesID].getColor() != moveBoard[piece[possibleMovesID].getXPos()+(1)][piece[possibleMovesID].getYPos()-(1)]-80) {
+									possibleMovesRect[counter] = new Rectangle((piece[possibleMovesID].getXPos()+(1))*boxW, (piece[possibleMovesID].getYPos()-(1))*boxH, (boxW), (boxH));
+									moveBoard[piece[possibleMovesID].getXPos()+(1)][piece[possibleMovesID].getYPos()-(1)] = (counter+1);
+									counter++;
+								}
+							}
+							else {
+								possibleMovesRect[counter] = new Rectangle((piece[possibleMovesID].getXPos()+(1))*boxW, (piece[possibleMovesID].getYPos()-(1))*boxH, (boxW), (boxH));
+								moveBoard[piece[possibleMovesID].getXPos()+(1)][piece[possibleMovesID].getYPos()-(1)] = (counter+1);
+								counter++;
+							}
+						}
+
+						if(leftX != 0 && bottomY != 0) {
+							if(moveBoard[piece[possibleMovesID].getXPos()-(1)][piece[possibleMovesID].getYPos()+(1)]/10 == 8) {
+								if(piece[possibleMovesID].getColor() != moveBoard[piece[possibleMovesID].getXPos()-(1)][piece[possibleMovesID].getYPos()+(1)]-80) {
+									possibleMovesRect[counter] = new Rectangle((piece[possibleMovesID].getXPos()-(1))*boxW, (piece[possibleMovesID].getYPos()+(1))*boxH, (boxW), (boxH));
+									moveBoard[piece[possibleMovesID].getXPos()-(1)][piece[possibleMovesID].getYPos()+(1)] = (counter+1);
+									counter++;
+								}
+							}
+							else {
+								possibleMovesRect[counter] = new Rectangle((piece[possibleMovesID].getXPos()-(1))*boxW, (piece[possibleMovesID].getYPos()+(1))*boxH, (boxW), (boxH));
+								moveBoard[piece[possibleMovesID].getXPos()-(1)][piece[possibleMovesID].getYPos()+(1)] = (counter+1);
+								counter++;
+							}
+						}
+						if(leftX != 0 && topY != 0) {
+							if(moveBoard[piece[possibleMovesID].getXPos()-(1)][piece[possibleMovesID].getYPos()-(1)]/10 == 8) {
+								if(piece[possibleMovesID].getColor() != moveBoard[piece[possibleMovesID].getXPos()-(1)][piece[possibleMovesID].getYPos()-(1)]-80) {
+									possibleMovesRect[counter] = new Rectangle((piece[possibleMovesID].getXPos()-(1))*boxW, (piece[possibleMovesID].getYPos()-(1))*boxH, (boxW), (boxH));
+									moveBoard[piece[possibleMovesID].getXPos()-(1)][piece[possibleMovesID].getYPos()-(1)] = (counter+1);
+									counter++;
+								}
+							}
+							else {
+								possibleMovesRect[counter] = new Rectangle((piece[possibleMovesID].getXPos()-(1))*boxW, (piece[possibleMovesID].getYPos()-(1))*boxH, (boxW), (boxH));
+								moveBoard[piece[possibleMovesID].getXPos()-(1)][piece[possibleMovesID].getYPos()-(1)] = (counter+1);
+								counter++;
+							}
+						}
+						
+						
+						if(leftX != 0) {
+							if(moveBoard[piece[possibleMovesID].getXPos()-(1)][piece[possibleMovesID].getYPos()]/10 == 8) {
+								if(piece[possibleMovesID].getColor() != moveBoard[piece[possibleMovesID].getXPos()-(1)][piece[possibleMovesID].getYPos()]-80) {
+									possibleMovesRect[counter] = new Rectangle((piece[possibleMovesID].getXPos()-(1))*boxW, (piece[possibleMovesID].getYPos())*boxH, (boxW), (boxH));
+									moveBoard[piece[possibleMovesID].getXPos()-(1)][piece[possibleMovesID].getYPos()] = (counter+1);
+									counter++;
+								}
+							}
+							else {
+								possibleMovesRect[counter] = new Rectangle((piece[possibleMovesID].getXPos()-(1))*boxW, (piece[possibleMovesID].getYPos())*boxH, (boxW), (boxH));
+								moveBoard[piece[possibleMovesID].getXPos()-(1)][piece[possibleMovesID].getYPos()] = (counter+1);
+								counter++;
+							}
+						}
+						
+						if(rightX != 0) {
+							if(moveBoard[piece[possibleMovesID].getXPos()+(1)][piece[possibleMovesID].getYPos()]/10 == 8) {
+								if(piece[possibleMovesID].getColor() != moveBoard[piece[possibleMovesID].getXPos()+(1)][piece[possibleMovesID].getYPos()]-80) {
+									possibleMovesRect[counter] = new Rectangle((piece[possibleMovesID].getXPos()+(1))*boxW, (piece[possibleMovesID].getYPos())*boxH, (boxW), (boxH));
+									moveBoard[piece[possibleMovesID].getXPos()+(1)][piece[possibleMovesID].getYPos()] = (counter+1);
+									counter++;
+								}
+							}
+							else {
+								possibleMovesRect[counter] = new Rectangle((piece[possibleMovesID].getXPos()+(1))*boxW, (piece[possibleMovesID].getYPos())*boxH, (boxW), (boxH));
+								moveBoard[piece[possibleMovesID].getXPos()+(1)][piece[possibleMovesID].getYPos()] = (counter+1);
+								counter++;
+							}
+						}
+						
+						
+						if(topY != 0) {
+							if(moveBoard[piece[possibleMovesID].getXPos()][piece[possibleMovesID].getYPos()-(1)]/10 == 8) {
+								if(piece[possibleMovesID].getColor() != moveBoard[piece[possibleMovesID].getXPos()][piece[possibleMovesID].getYPos()-(1)]-80) {
+									possibleMovesRect[counter] = new Rectangle((piece[possibleMovesID].getXPos())*boxW, (piece[possibleMovesID].getYPos()-(1))*boxH, (boxW), (boxH));
+									moveBoard[piece[possibleMovesID].getXPos()][piece[possibleMovesID].getYPos()-(1)] = (counter+1);
+									counter++;
+								}
+							}
+							else {
+								possibleMovesRect[counter] = new Rectangle((piece[possibleMovesID].getXPos())*boxW, (piece[possibleMovesID].getYPos()-(1))*boxH, (boxW), (boxH));
+								moveBoard[piece[possibleMovesID].getXPos()][piece[possibleMovesID].getYPos()-(1)] = (counter+1);
+								counter++;
+							}
+						}
+						
+						if(bottomY != 0) {
+							if(moveBoard[piece[possibleMovesID].getXPos()][piece[possibleMovesID].getYPos()+(1)]/10 == 8) {
+								if(piece[possibleMovesID].getColor() !=moveBoard[piece[possibleMovesID].getXPos()][piece[possibleMovesID].getYPos()+(1)]-80) {
+									possibleMovesRect[counter] = new Rectangle((piece[possibleMovesID].getXPos())*boxW, (piece[possibleMovesID].getYPos()+(1))*boxH, (boxW), (boxH));
+									moveBoard[piece[possibleMovesID].getXPos()][piece[possibleMovesID].getYPos()+(1)] = (counter+1);
+									counter++;
+								}
+							}
+							else {
+								possibleMovesRect[counter] = new Rectangle((piece[possibleMovesID].getXPos())*boxW, (piece[possibleMovesID].getYPos()+(1))*boxH, (boxW), (boxH));
+								moveBoard[piece[possibleMovesID].getXPos()][piece[possibleMovesID].getYPos()+(1)] = (counter+1);
+								counter++;
+							}
+						}
+					}
+					else if (piece[possibleMovesID].getType() == 'n'){
 						
 					}
 					for(int ik = 0; ik<moveBoard.length; ik++) {
@@ -628,82 +745,25 @@ public class chess {
 			if(possibleMoves) {
 				for(int i = 0; i < possibleMovesRect.length; i++) {
 					if(possibleMovesRect[i].contains(e.getX(), e.getY())) {
-						if(piece[possibleMovesID].getType() == 'p') {
-							for(int a = 0; a<moveBoard.length; a++) {
-								for(int b = 0; b<moveBoard.length; b++) {
-									if(moveBoard[a][b] == i+1) {
-										board[piece[possibleMovesID].getYPos()][piece[possibleMovesID].getXPos()] = 0;
-										piece[possibleMovesID].changePos(a,b);
-										piece[possibleMovesID].madeMove(true);
-										board[piece[possibleMovesID].getYPos()][piece[possibleMovesID].getXPos()] = piece[possibleMovesID].getId();
-										if(piece[possibleMovesID].getColor() == 0) {
-											whiteTurn = false;
-										}
-										else {
-											whiteTurn = true;
-										}
+						for(int a = 0; a<moveBoard.length; a++) {
+							for(int b = 0; b<moveBoard.length; b++) {
+								if(moveBoard[a][b] == i+1) {
+									board[piece[possibleMovesID].getYPos()][piece[possibleMovesID].getXPos()] = 0;
+									piece[possibleMovesID].changePos(a,b);
+									piece[possibleMovesID].madeMove(true);
+									board[piece[possibleMovesID].getYPos()][piece[possibleMovesID].getXPos()] = piece[possibleMovesID].getId();
+									if(piece[possibleMovesID].getColor() == 0) {
+										whiteTurn = false;
 									}
-								}
-							}	
-						}
-						else if(piece[possibleMovesID].getType() == 'b') {
-							for(int a = 0; a<moveBoard.length; a++) {
-								for(int b = 0; b<moveBoard.length; b++) {
-									if(moveBoard[a][b] == i+1) {
-										board[piece[possibleMovesID].getYPos()][piece[possibleMovesID].getXPos()] = 0;
-										piece[possibleMovesID].changePos(a,b);
-										board[piece[possibleMovesID].getYPos()][piece[possibleMovesID].getXPos()] = piece[possibleMovesID].getId();
-										if(piece[possibleMovesID].getColor() == 0) {
-											whiteTurn = false;
-										}
-										else {
-											whiteTurn = true;
-										}
+									else {
+										whiteTurn = true;
 									}
 								}
 							}
-						}
-						else if(piece[possibleMovesID].getType() == 'r') {
-							for(int a = 0; a<moveBoard.length; a++) {
-								for(int b = 0; b<moveBoard.length; b++) {
-									if(moveBoard[a][b] == i+1) {
-										board[piece[possibleMovesID].getYPos()][piece[possibleMovesID].getXPos()] = 0;
-										piece[possibleMovesID].changePos(a,b);
-										board[piece[possibleMovesID].getYPos()][piece[possibleMovesID].getXPos()] = piece[possibleMovesID].getId();
-										if(piece[possibleMovesID].getColor() == 0) {
-											whiteTurn = false;
-										}
-										else {
-											whiteTurn = true;
-										}
-									}
-								}
-							}
-						}
-						else if(piece[possibleMovesID].getType() == 'q') {
-							for(int a = 0; a<moveBoard.length; a++) {
-								for(int b = 0; b<moveBoard.length; b++) {
-									if(moveBoard[a][b] == i+1) {
-										board[piece[possibleMovesID].getYPos()][piece[possibleMovesID].getXPos()] = 0;
-										piece[possibleMovesID].changePos(a,b);
-										board[piece[possibleMovesID].getYPos()][piece[possibleMovesID].getXPos()] = piece[possibleMovesID].getId();
-										if(piece[possibleMovesID].getColor() == 0) {
-											whiteTurn = false;
-										}
-										else {
-											whiteTurn = true;
-										}
-									}
-								}
-							}
-						}
-						possibleMoves = false;
-						break;
+						}	
+					possibleMoves = false;
+					break;
 					}
-//					else {
-//						possibleMoves = false;
-//						break;
-//					}
 				}
 				
 				
@@ -715,10 +775,7 @@ public class chess {
 //					System.out.println("");
 //				}
 //				System.out.println("");
-				
-				
-				
-				
+							
 			}
 			else {
 				if(!possibleMoves) {
@@ -740,83 +797,6 @@ public class chess {
 							else {
 								possibleMoves = false;
 							}
-						}
-						else {
-							possibleMoves = false;
-						}
-					}
-				}
-				if(!possibleMoves) {
-					for(int i = 0; i < rectPiece.length; i++) {
-						if(rectPiece[i].contains(e.getX(), e.getY())) {
-							if(piece[i].getColor() == 0 && whiteTurn) {
-								possibleMoves = true;
-								possibleMoves(i);
-								break;
-							}
-							else {
-								possibleMoves = false;
-							}
-							if(piece[i].getColor() == 1 && !whiteTurn) {
-								possibleMoves = true;
-								possibleMoves(i);
-								break;
-							}
-							else {
-								possibleMoves = false;
-							}
-						}
-						else {
-							possibleMoves = false;
-						}
-					}
-				}
-				if(!possibleMoves) {
-					for(int i = 0; i < rectPiece.length; i++) {
-						if(rectPiece[i].contains(e.getX(), e.getY())) {
-							if(piece[i].getColor() == 0 && whiteTurn) {
-								possibleMoves = true;
-								possibleMoves(i);
-								break;
-							}
-							else {
-								possibleMoves = false;
-							}
-							if(piece[i].getColor() == 1 && !whiteTurn) {
-								possibleMoves = true;
-								possibleMoves(i);
-								break;
-							}
-							else {
-								possibleMoves = false;
-							}
-							
-						}
-						else {
-							possibleMoves = false;
-						}
-					}
-				}
-				if(!possibleMoves) {
-					for(int i = 0; i < rectPiece.length; i++) {
-						if(rectPiece[i].contains(e.getX(), e.getY())) {
-							if(piece[i].getColor() == 0 && whiteTurn) {
-								possibleMoves = true;
-								possibleMoves(i);
-								break;
-							}
-							else {
-								possibleMoves = false;
-							}
-							if(piece[i].getColor() == 1 && !whiteTurn) {
-								possibleMoves = true;
-								possibleMoves(i);
-								break;
-							}
-							else {
-								possibleMoves = false;
-							}
-							
 						}
 						else {
 							possibleMoves = false;
