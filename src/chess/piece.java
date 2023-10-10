@@ -1,17 +1,16 @@
 package chess;
 
-public class pawn {
+public class piece {
 	int x, y, color, id;
-	char promotion;
-	boolean dead, promoted, firstMove;
-	pawn(int color, int id, int x, int y, boolean dead, boolean promoted, char promotion, boolean firstMove){
+	char type;
+	boolean dead, firstMove;
+	piece(int color, int id, int x, int y, boolean dead, char type, boolean firstMove){
 		this.color = color;
 		this.id = id;
 		this.x = x;
 		this.y = y;
 		this.dead = dead;
-		this.promoted = promoted;
-		this.promotion = promotion;
+		this.type = type;
 		this.firstMove = firstMove;
 	}
 	void changePos(int x, int y){
@@ -21,10 +20,12 @@ public class pawn {
 	boolean isAlive() {
 		return dead;
 	}
-	void changeState(boolean dead, boolean promoted, char promotion) {
+	char getType() {
+		return type;
+	}
+	void changeState(boolean dead, char type) {
 		this.dead = dead;
-		this.promoted = promoted;
-		this.promotion= promotion;
+		this.type = type;
 	}
 	void madeMove(boolean firstMove) {
 		this.firstMove = firstMove;

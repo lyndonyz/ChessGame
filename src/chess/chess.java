@@ -26,17 +26,20 @@ public class chess {
 	final static int SIZE = 8;
 	int[][] board = new int[SIZE][SIZE];
 	int[][] moveBoard = new int[SIZE][SIZE];
-	pawn[] pawns = new pawn[16];
-	Rectangle[] rectPawns = new Rectangle[16];
-	
-	bishop[] bishops = new bishop[4];
-	Rectangle[] rectBishops = new Rectangle[4];
-	
-	rook[] rooks = new rook[4];
-	Rectangle[] rectRooks = new Rectangle[4];
-	
-	queen[] queens = new queen[2];
-	Rectangle[] rectQueens = new Rectangle[2];
+	piece[] piece = new piece[32];
+	Rectangle[] rectPiece = new Rectangle[32];
+//	
+//	pawn[] pawns = new pawn[16];
+//	Rectangle[] rectPawns = new Rectangle[16];
+//	
+//	bishop[] bishops = new bishop[4];
+//	Rectangle[] rectBishops = new Rectangle[4];
+//	
+//	rook[] rooks = new rook[4];
+//	Rectangle[] rectRooks = new Rectangle[4];
+//	
+//	queen[] queens = new queen[2];
+//	Rectangle[] rectQueens = new Rectangle[2];
 	
 	Rectangle[] possibleMovesRect = new Rectangle[30];
 //	Rectangle[] possibleTakeRect = new Rectangle[8];
@@ -63,47 +66,42 @@ public class chess {
 	}
 	
 	void createPieces() {
-		//black pawns
-		for(int i = 0; i < SIZE; i++) {
-			pawns[i] = new pawn(1,11+i,i,1,false,false,'n',false);
-			String tempPos = "1"+pawns[i].getId();
-			board[pawns[i].getYPos()][pawns[i].getXPos()] = Integer.parseInt(tempPos);
-		}
-		//white pawns
-		for(int i = 0; i < SIZE; i++) {
-			pawns[i+8] = new pawn(0,19+i,i,6,false,false,'n',false);
-			String tempPos = "1"+pawns[i+8].getId();
-			board[pawns[i+8].getYPos()][pawns[i+8].getXPos()] = Integer.parseInt(tempPos);
-		}
-		//black bishops
-		for(int i = 0; i < 2; i++) {
-			bishops[i] = new bishop(1,11+i,(3*i)+2,0,false);
-			String tempPos = "2"+bishops[i].getId();
-			board[bishops[i].getYPos()][bishops[i].getXPos()] = Integer.parseInt(tempPos);
-		}
-		//white bishops
-		for(int i = 0; i < 2; i++) {
-			bishops[i+2] = new bishop(0,13+i,(3*i)+2,7,false);
-			String tempPos = "2"+bishops[i+2].getId();
-			board[bishops[i+2].getYPos()][bishops[i+2].getXPos()] = Integer.parseInt(tempPos);
-		}
-		//black rooks
-		for(int i = 0; i < 2; i++) {
-			rooks[i] = new rook(1,11+i,(7*i),0,false);
-			String tempPos = "3"+rooks[i].getId();
-			board[rooks[i].getYPos()][rooks[i].getXPos()] = Integer.parseInt(tempPos);
-		}
-		//white rooks
-		for(int i = 0; i < 2; i++) {
-			rooks[i+2] = new rook(0,13+i,(7*i),7,false);
-			String tempPos = "3"+rooks[i+2].getId();
-			board[rooks[i+2].getYPos()][rooks[i+2].getXPos()] = Integer.parseInt(tempPos);
-		}
-		//both queens
-		for(int i = 0; i < 2; i++) {
-			queens[i] = new queen(1-i,11+i,3,(7*i),false);
-			String tempPos = "4"+queens[i].getId();
-			board[queens[i].getYPos()][queens[i].getXPos()] = Integer.parseInt(tempPos);
+		for(int i = 0; i < piece.length; i++) {
+			//black pawns
+			if(i < 8) {
+				piece[i] = new piece(1,i,i,1,false,'p',false);
+				board[piece[i].getYPos()][piece[i].getXPos()] = piece[i].getId();
+			}
+			//white pawns
+			else if(i < 16){
+				piece[i] = new piece(0,i,i-8,6,false,'p',false);
+				board[piece[i].getYPos()][piece[i].getXPos()] = piece[i].getId();
+			}
+			//black bishops
+			else if(i < 18) {
+				piece[i] = new piece(1,i,(3*(i-10))+2,0,false, 'b', false);
+				board[piece[i].getYPos()][piece[i].getXPos()] = piece[i].getId();
+			}
+			//white bishops
+			else if(i < 20) {
+				piece[i] = new piece(0,i,(3*(i-10))+2,7,false, 'b', false);
+				board[piece[i].getYPos()][piece[i].getXPos()] = piece[i].getId();
+			}
+			//black rooks
+			else if(i < 22) {
+				piece[i] = new piece(1,i,(7*i),0,false, 'r', false);
+				board[piece[i].getYPos()][piece[i].getXPos()] = piece[i].getId();
+			}
+			//white rooks
+			else if(i < 24) {
+				piece[i] = new piece(0,i,(7*i),7,false, 'r', false);
+				board[piece[i].getYPos()][piece[i].getXPos()] = piece[i].getId();
+			}
+			//both queens
+			else if(i < 26) {
+				piece[i] = new piece(1-i-24,i,3,(7*(i-24)),false, 'q', false);
+				board[piece[i].getYPos()][piece[i].getXPos()] = piece[i].getId();
+			}
 		}
 		
 		
@@ -167,65 +165,57 @@ public class chess {
 				for(int j = 0; j<board.length; j++) {
 					if (board[i][j] != 0) {
 						//pawn drawing
-						if (board[i][j]/100 == 1) {
-							if(pawns[(board[i][j]%100)-11].getColor() == 1) {
+						if (piece[board[i][j]].getType() == 'p') {
+							if(piece[board[i][j]].getColor() == 1) {
 								g.setColor(new Color(0,0,0));
-								rectPawns[(board[i][j]%100)-11] = new Rectangle(j*boxW, i*boxH, (boxW), (boxH));
-								((Graphics2D) g).fill(rectPawns[(board[i][j]%100)-11]);
 							}
 							else {
 								g.setColor(new Color(255,255,255));
-								rectPawns[(board[i][j]%100)-11] = new Rectangle(j*boxW, i*boxH, (boxW), (boxH));
-								((Graphics2D) g).fill(rectPawns[(board[i][j]%100)-11]);
 							}
+							rectPiece[board[i][j]] = new Rectangle(j*boxW, i*boxH, (boxW), (boxH));
+							((Graphics2D) g).fill(rectPiece[board[i][j]]);
 							g.setColor(new Color(187,173,160));
 							g.setFont(new Font("SansSerif", Font.BOLD, 60));
 							g.drawString("P", j*boxW+25, i*boxH+65);
 						}
 						//bishop drawing
-						else if (board[i][j]/100 == 2) {
-							if(bishops[(board[i][j]%200)-11].getColor() == 1) {
+						else if (piece[board[i][j]].getType() == 'b') {
+							if(piece[board[i][j]].getColor() == 1) {
 								g.setColor(new Color(0,0,0));
-								rectBishops[(board[i][j]%200)-11] = new Rectangle(j*boxW, i*boxH, (boxW), (boxH));
-								((Graphics2D) g).fill(rectBishops[(board[i][j]%200)-11]);
 							}
 							else {
 								g.setColor(new Color(255,255,255));
-								rectBishops[(board[i][j]%200)-11] = new Rectangle(j*boxW, i*boxH, (boxW), (boxH));
-								((Graphics2D) g).fill(rectBishops[(board[i][j]%200)-11]);
 							}
+							rectPiece[board[i][j]] = new Rectangle(j*boxW, i*boxH, (boxW), (boxH));
+							((Graphics2D) g).fill(rectPiece[board[i][j]]);
 							g.setColor(new Color(187,173,160));
 							g.setFont(new Font("SansSerif", Font.BOLD, 60));
 							g.drawString("B", j*boxW+25, i*boxH+65);
 						}
 						//rook drawing
-						else if (board[i][j]/100 == 3) {
-							if(rooks[(board[i][j]%300)-11].getColor() == 1) {
+						else if (piece[board[i][j]].getType() == 'r') {
+							if(piece[board[i][j]].getColor() == 1) {
 								g.setColor(new Color(0,0,0));
-								rectRooks[(board[i][j]%300)-11] = new Rectangle(j*boxW, i*boxH, (boxW), (boxH));
-								((Graphics2D) g).fill(rectRooks[(board[i][j]%300)-11]);
 							}
 							else {
 								g.setColor(new Color(255,255,255));
-								rectRooks[(board[i][j]%300)-11] = new Rectangle(j*boxW, i*boxH, (boxW), (boxH));
-								((Graphics2D) g).fill(rectRooks[(board[i][j]%300)-11]);
 							}
+							rectPiece[board[i][j]] = new Rectangle(j*boxW, i*boxH, (boxW), (boxH));
+							((Graphics2D) g).fill(rectPiece[board[i][j]]);
 							g.setColor(new Color(187,173,160));
 							g.setFont(new Font("SansSerif", Font.BOLD, 60));
 							g.drawString("R", j*boxW+25, i*boxH+65);
 						}
 						//queen drawing
-						else if (board[i][j]/100 == 4) {
-							if(queens[(board[i][j]%400)-11].getColor() == 1) {
+						else if (piece[board[i][j]].getType() == 'q') {
+							if(piece[board[i][j]].getColor() == 1) {
 								g.setColor(new Color(0,0,0));
-								rectQueens[(board[i][j]%400)-11] = new Rectangle(j*boxW, i*boxH, (boxW), (boxH));
-								((Graphics2D) g).fill(rectQueens[(board[i][j]%400)-11]);
 							}
 							else {
 								g.setColor(new Color(255,255,255));
-								rectQueens[(board[i][j]%400)-11] = new Rectangle(j*boxW, i*boxH, (boxW), (boxH));
-								((Graphics2D) g).fill(rectQueens[(board[i][j]%400)-11]);
 							}
+							rectPiece[board[i][j]] = new Rectangle(j*boxW, i*boxH, (boxW), (boxH));
+							((Graphics2D) g).fill(rectPiece[board[i][j]]);
 							g.setColor(new Color(187,173,160));
 							g.setFont(new Font("SansSerif", Font.BOLD, 60));
 							g.drawString("Q", j*boxW+25, i*boxH+65);
@@ -259,55 +249,55 @@ public class chess {
 					for(int a = 0; a<moveBoard.length; a++) {
 						for(int b = 0; b<moveBoard.length; b++) {
 							if(board[a][b] != 0) {
-								if(board[a][b]/100 == 1) {
-									moveBoard[b][a] = 'P'+pawns[board[a][b]-111].getColor();
+								if(piece[board[a][b]].getType() == 'p') {
+									moveBoard[b][a] = 'P'+piece[board[a][b]].getColor();
 								}
-								if(board[a][b]/100 == 2) {
-									moveBoard[b][a] = 'P'+bishops[board[a][b]-211].getColor();
+								if(piece[board[a][b]].getType() == 'b') {
+									moveBoard[b][a] = 'P'+piece[board[a][b]].getColor();
 								}
-								if(board[a][b]/100 == 3) {
-									moveBoard[b][a] = 'P'+rooks[board[a][b]-311].getColor();
+								if(piece[board[a][b]].getType() == 'r') {
+									moveBoard[b][a] = 'P'+piece[board[a][b]].getColor();
 								}
-								if(board[a][b]/100 == 4) {
-									moveBoard[b][a] = 'P'+queens[board[a][b]-411].getColor();
+								if(piece[board[a][b]].getType() == 'q') {
+									moveBoard[b][a] = 'P'+piece[board[a][b]].getColor();
 								}
 							}
 						}
 					}
 					
 					//pawn
-					if(possibleMovesID/100 == 1) {
-						if(pawns[possibleMovesID-100].getColor() == 0) {
-							if(!pawns[possibleMovesID-100].hasMoved()) {
+					if(piece[possibleMovesID].getType() == 'p') {
+						if(piece[possibleMovesID].getColor() == 0) {
+							if(!piece[possibleMovesID].hasMoved()) {
 								for(int j = 0; j < 2; j++) {
-									possibleMovesRect[j] = new Rectangle(pawns[possibleMovesID-100].getXPos()*boxW, (pawns[possibleMovesID-100].getYPos()-(j+1))*boxH, (boxW), (boxH));
-									moveBoard[pawns[possibleMovesID-100].getXPos()][pawns[possibleMovesID-100].getYPos()-(j+1)] = (j+1);
+									possibleMovesRect[j] = new Rectangle(piece[possibleMovesID].getXPos()*boxW, (piece[possibleMovesID].getYPos()-(j+1))*boxH, (boxW), (boxH));
+									moveBoard[piece[possibleMovesID].getXPos()][piece[possibleMovesID].getYPos()-(j+1)] = (j+1);
 								}
 							}
 							else {
-								possibleMovesRect[0] = new Rectangle(pawns[possibleMovesID-100].getXPos()*boxW, (pawns[possibleMovesID-100].getYPos()-1)*boxH, (boxW), (boxH));
-								moveBoard[pawns[possibleMovesID-100].getXPos()][pawns[possibleMovesID-100].getYPos()-1] = (1);
+								possibleMovesRect[0] = new Rectangle(piece[possibleMovesID].getXPos()*boxW, (piece[possibleMovesID].getYPos()-1)*boxH, (boxW), (boxH));
+								moveBoard[piece[possibleMovesID].getXPos()][piece[possibleMovesID].getYPos()-1] = (1);
 							}
 						}
 						else {
-							if(!pawns[possibleMovesID-100].hasMoved()) {
+							if(!piece[possibleMovesID].hasMoved()) {
 								for(int j = 0; j < 2; j++) {
-									possibleMovesRect[j] = new Rectangle(pawns[possibleMovesID-100].getXPos()*boxW, (pawns[possibleMovesID-100].getYPos()+(j+1))*boxH, (boxW), (boxH));
-									moveBoard[pawns[possibleMovesID-100].getXPos()][pawns[possibleMovesID-100].getYPos()+(j+1)] = (j+1);
+									possibleMovesRect[j] = new Rectangle(piece[possibleMovesID].getXPos()*boxW, (piece[possibleMovesID].getYPos()+(j+1))*boxH, (boxW), (boxH));
+									moveBoard[piece[possibleMovesID].getXPos()][piece[possibleMovesID].getYPos()+(j+1)] = (j+1);
 								}
 							}
 							else {
-								possibleMovesRect[0] = new Rectangle(pawns[possibleMovesID-100].getXPos()*boxW, (pawns[possibleMovesID-100].getYPos()+1)*boxH, (boxW), (boxH));
-								moveBoard[pawns[possibleMovesID-100].getXPos()][pawns[possibleMovesID-100].getYPos()+(1)] = (1);
+								possibleMovesRect[0] = new Rectangle(piece[possibleMovesID].getXPos()*boxW, (piece[possibleMovesID].getYPos()+1)*boxH, (boxW), (boxH));
+								moveBoard[piece[possibleMovesID].getXPos()][piece[possibleMovesID].getYPos()+(1)] = (1);
 							}
 						}
 					}
 					//bishop
-					else if(possibleMovesID/100 == 2){
-						int leftX = bishops[possibleMovesID-200].getXPos();
-						int rightX = SIZE - bishops[possibleMovesID-200].getXPos() -1;
-						int topY = bishops[possibleMovesID-200].getYPos();
-						int bottomY = SIZE - bishops[possibleMovesID-200].getYPos() -1;
+					else if(piece[possibleMovesID].getType() == 'b'){
+						int leftX = piece[possibleMovesID].getXPos();
+						int rightX = SIZE - piece[possibleMovesID].getXPos() -1;
+						int topY = piece[possibleMovesID].getYPos();
+						int bottomY = SIZE - piece[possibleMovesID].getYPos() -1;
 						int var1;
 						int counter = 0;
 //						int takeCounter = 0;
@@ -319,8 +309,8 @@ public class chess {
 							var1 = rightX;
 						}
 						for(int j = 0; j < var1; j++) {
-							if(moveBoard[bishops[possibleMovesID-200].getXPos()+(j+1)][bishops[possibleMovesID-200].getYPos()+(j+1)]/10 == 8){
-								if(bishops[possibleMovesID-200].getColor() != moveBoard[bishops[possibleMovesID-200].getXPos()+(j+1)][bishops[possibleMovesID-200].getYPos()+(j+1)]-80) {
+							if(moveBoard[piece[possibleMovesID].getXPos()+(j+1)][piece[possibleMovesID].getYPos()+(j+1)]/10 == 8){
+								if(piece[possibleMovesID].getColor() != moveBoard[piece[possibleMovesID].getXPos()+(j+1)][piece[possibleMovesID].getYPos()+(j+1)]-80) {
 									possibleMovesRect[counter] = new Rectangle((bishops[possibleMovesID-200].getXPos()+(j+1))*boxW, (bishops[possibleMovesID-200].getYPos()+(j+1))*boxH, (boxW), (boxH));
 									moveBoard[bishops[possibleMovesID-200].getXPos()+(j+1)][bishops[possibleMovesID-200].getYPos()+(j+1)] = (counter+1);
 									counter++;
